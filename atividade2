@@ -1,0 +1,10 @@
+class idoso:
+    def __init__(self, nome, idade, senha , genero , email):
+        self.nome = nome
+        self.idade = idade
+        self.senha = senha
+        self.genero = genero
+        self.email = email
+
+def apresentar(self):
+  return f"nome: {self.nome} , idade: {self.idade} , senha: {self.senha} genero: {self.email}"
