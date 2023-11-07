@@ -1,0 +1,59 @@
+import pandas as pd
+import win32com.client as win32
+
+# Importação de dados
+Tabela_Vendas = pd.read_excel('Vendas.xlsx')
+
+# Visualizar a base de dados
+pd.set_option('display.max_columns', None)
+print(Tabela_Vendas)
+
+# Faturamento por loja
+faturamento = Tabela_Vendas[['ID Loja', 'Valor Final']].groupby('ID Loja').sum()
+print(faturamento)
+
+# Quantidade de produtos vendidos por loja
+quantidade = Tabela_Vendas[['ID Loja', 'Quantidade']].groupby('ID Loja').sum()
+print(quantidade)
+
+# Aqui está criando uma sequência de traços para separar as informações
+print('_' * 30)
+
+# Ticket médio por loja
+# to_frame cria realmente uma coluna removendo o dtype
+ticket_medio = (faturamento['Valor Final'] / quantidade['Quantidade']).to_frame()
+ticket_medio = ticket_medio.rename(columns={0: 'Ticket Médio'})
+print(ticket_medio)
+
+# Lista de destinatários (emails)
+destinatarios = ['email1@example.com', 'email2@example.com']
+
+# Enviar email com relatório para cada destinatário
+for destinatario in destinatarios:
+    # Iniciar o Outlook
+    outlook = win32.Dispatch('Outlook.Application')
+
+    # Criar um novo email
+    mail = outlook.CreateItem(0)
+
+    # Configurar destinatário, assunto e corpo do email
+    mail.To = destinatario
+    mail.Subject = 'Relatório de Vendas'
+    mail.HTMLBody = f'''
+    <p>Prezados,</p>
+    <p>Segue o relatório de vendas por cada loja:</p>
+
+    <p>Faturamento:</p>
+    {faturamento.to_html(formatters={'Valor Final': 'R${:,.2f}'.format})}
+    <p>Quantidade vendida:</p>
+    {quantidade.to_html()}
+    <p>Ticket médio dos produtos de cada loja:</p>
+    {ticket_medio.to_html(formatters={'Ticket Médio': 'R${:,.2f}'.format})}
+    <p>Qualquer dúvida estou à disposição.</p>
+    <p>Atenciosamente,</p>
+    <p>Thiago Henrique, Analista de Dados</p>
+    '''
+
+    # Enviar o email
+    mail.Send()
+Neste código, realizei a análise de uma planilha com mais de 110.000 linhas contendo diversas informações e consegui enviar o email com todos os dados solicitados.
