@@ -29,3 +29,4 @@ class MeuAplicativo(App):
 
 # Executar o aplicativo
 MeuAplicativo().run()
+
